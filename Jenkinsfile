@@ -31,9 +31,11 @@ node('master') {
     }
 	stage('Tests') {
         try {
-            dir('tests/rest-assured') {
-                sh './gradlew clean test'
-            }
+		    withGradle {
+				dir('tests/rest-assured') {
+					sh 'gradle clean test'
+				}
+			}            
         } finally {
             junit testResults: 'tests/rest-assured/build/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/rest-assured/build/**'
