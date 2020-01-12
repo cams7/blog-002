@@ -3,7 +3,7 @@
 def releasedVersion
 
 node('master') {
-	/*stage('Prepare') {
+	stage('Prepare') {
         deleteDir()
         parallel Checkout: {
             checkout scm
@@ -46,7 +46,7 @@ node('master') {
         try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
-                    sh 'mvn clean test -Dmaven.test.failure.ignore=true'
+                    //sh 'mvn clean test -Dmaven.test.failure.ignore=true'
                 }
             }
         } finally {
@@ -57,7 +57,7 @@ node('master') {
         dockerCmd 'rm -f snapshot'
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
-    }*/
+    }
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
