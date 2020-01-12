@@ -29,8 +29,8 @@ node('master') {
             }
         }
     }
-	/*stage('Tests') {
-        try {
+	stage('Tests') {
+        /*try {
 		    def gradleHome = tool name: 'gradle', type: 'gradle'
 			dir('tests/rest-assured') {
 				sh "$gradleHome/bin/gradle clean test"
@@ -52,12 +52,12 @@ node('master') {
         } finally {
             junit testResults: 'tests/bobcat/target/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/bobcat/target/**'
-        }
+        }*/
 
         dockerCmd 'rm -f snapshot'
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
-    }*/
+    }
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
