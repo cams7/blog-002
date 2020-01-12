@@ -62,9 +62,9 @@ node('master') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
                 releasedVersion = getReleasedVersion()
-				buildNumber=env.BUILD_NUMBER
+				def snapshotVersion=getSnapshotVersion()
 				sh "echo ${releasedVersion}"
-				sh "echo ${buildNumber}"
+				sh "echo ${snapshotVersion}"
                 /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
                     sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
                     sh "mvn release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${releasedVersion}.${buildNumber}-SNAPSHOT -Dusername=${username} -Dpassword=${password}"
@@ -81,4 +81,10 @@ def dockerCmd(args) {
 
 def getReleasedVersion() {
     return (readFile('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')[0][1]
+}
+
+def getSnapshotVersion() {
+	def buildNumber=env.BUILD_NUMBER
+	def array = releasedVersion.split('\.')
+	return "${array[0]}.${array[1]}.$buildNumber-SNAPSHOT"
 }
