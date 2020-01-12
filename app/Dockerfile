@@ -1,4 +1,4 @@
-FROM java:8-jre
+FROM 172.42.42.200:18082/java:8-jre
 
 COPY target/sparktodo-jar-with-dependencies.jar /opt
 
