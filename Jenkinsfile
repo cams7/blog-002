@@ -61,8 +61,8 @@ node('master') {
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                releasedVersion = getReleasedVersion()
-				buildNumber=env.BUILD_NUMBER
+                def releasedVersion = getReleasedVersion()
+				def buildNumber=env.BUILD_NUMBER
 				sh "echo ${releasedVersion}"
 				sh "echo ${buildNumber}"
                 /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
@@ -81,6 +81,5 @@ def dockerCmd(args) {
 
 def getReleasedVersion() {
     //return (readFile('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')[0][1]
-	def matcher = readFile('pom.xml') =~ '<version>(.+?)</version>'
-    return matcher ? matcher[0][1] : null
+	return readFile('pom.xml') =~ '<version>(.+?)</version>'
 }
