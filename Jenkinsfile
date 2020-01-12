@@ -63,13 +63,11 @@ node('master') {
             dir('app') {
                 releasedVersion = getReleasedVersion()
 				def snapshotVersion=getSnapshotVersion()
-				sh "echo ${releasedVersion}"
-				sh "echo ${snapshotVersion}"
-                /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
+                withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
                     sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
-                    sh "mvn release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${releasedVersion}.${buildNumber}-SNAPSHOT -Dusername=${username} -Dpassword=${password}"
+                    sh "mvn release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${snapshotVersion} -Dusername=${username} -Dpassword=${password}"
                 }
-                dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."*/
+                //dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
             }
         }
     }
