@@ -61,9 +61,9 @@ node('master') {
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                //releasedVersion = getReleasedVersion()
+                releasedVersion = getReleasedVersion()
 				buildNumber=env.BUILD_NUMBER
-				//sh "echo ${releasedVersion}"
+				sh "echo ${releasedVersion}"
 				sh "echo ${buildNumber}"
                 /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
                     sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
@@ -81,5 +81,5 @@ def dockerCmd(args) {
 
 def getReleasedVersion() {
     //return (readFile('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')[0][1]
-	return (readFile('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')
+	return (readFile('pom.xml'))
 }
