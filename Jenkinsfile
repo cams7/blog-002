@@ -31,11 +31,10 @@ node('master') {
     }
 	stage('Tests') {
         try {
-		    withGradle {
-				dir('tests/rest-assured') {
-					sh 'gradle clean test'
-				}
-			}            
+		    def gradleHome = tool name: 'gradle', type: 'gradle'
+			dir('tests/rest-assured') {
+				sh "$gradleHome/bin/gradle clean test"
+			}          
         } finally {
             junit testResults: 'tests/rest-assured/build/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/rest-assured/build/**'
