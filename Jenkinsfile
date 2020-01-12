@@ -61,9 +61,9 @@ node('master') {
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                releasedVersion = getReleasedVersion()
+                //releasedVersion = getReleasedVersion()
 				buildNumber=env.BUILD_NUMBER
-				sh "echo ${releasedVersion}"
+				//sh "echo ${releasedVersion}"
 				sh "echo ${buildNumber}"
                 /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
                     sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
