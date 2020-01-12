@@ -3,7 +3,7 @@
 def releasedVersion
 
 node('master') {
-	stage('Prepare') {
+	/*stage('Prepare') {
         deleteDir()
         parallel Checkout: {
             checkout scm
@@ -43,7 +43,7 @@ node('master') {
         dockerCmd 'rm -f snapshot'
         dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
 
-        /*try {
+        try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
                     sh 'mvn clean test -Dmaven.test.failure.ignore=true'
@@ -52,12 +52,12 @@ node('master') {
         } finally {
             junit testResults: 'tests/bobcat/target/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/bobcat/target/**'
-        }*/
+        }
 
         dockerCmd 'rm -f snapshot'
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
-    }
+    }*/
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
@@ -65,11 +65,11 @@ node('master') {
 				buildNumber=env.BUILD_NUMBER
 				sh "echo ${releasedVersion}"
 				sh "echo ${buildNumber}"
-                withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
+                /*withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
                     sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
                     sh "mvn release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${releasedVersion}.${buildNumber}-SNAPSHOT -Dusername=${username} -Dpassword=${password}"
                 }
-                dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
+                dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."*/
             }
         }
     }
