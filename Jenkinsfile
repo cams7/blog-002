@@ -17,7 +17,7 @@ node('master') {
         }
     }
 
-    stage('Build') {
+    /*stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
                 sh 'mvn clean package'
@@ -78,7 +78,7 @@ node('master') {
 
     stage('Deploy @ Prod') {
         dockerCmd "run -d -p 9999:9999 --name 'production' 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion}"
-    }
+    }*/
   }
 }
 
