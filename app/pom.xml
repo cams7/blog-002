@@ -86,7 +86,11 @@
 					<releaseProfiles>releases</releaseProfiles>
                 </configuration-->
 				<configuration>
-                    <goals>package</goals>
+                    <goals>pre-integration-test</goals>
+					<preparationGoals>package</preparationGoals>
+					<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<remoteTagging>false</remoteTagging>
                 </configuration>
             </plugin>
         </plugins>
