@@ -6,7 +6,9 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    maven {
+        url "http://172.42.42.200:18081/repository/maven-group/"
+    }
 }
 
 dependencies {
