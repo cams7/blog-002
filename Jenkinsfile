@@ -61,7 +61,7 @@ node('master') {
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                def releasedVersion = getReleasedVersion()
+                releasedVersion = getReleasedVersion()
 				def buildNumber=env.BUILD_NUMBER
 				sh "echo ${releasedVersion}"
 				sh "echo ${buildNumber}"
