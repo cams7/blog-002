@@ -21,7 +21,14 @@ node('master') {
                 dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
             }
         }
-    }	
+    }
+	stage('Deploy') {
+        stage('Deploy') {
+            dir('app') {
+                dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
+            }
+        }
+    }
 }
 
 def dockerCmd(args) {
