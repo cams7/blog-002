@@ -85,6 +85,6 @@ def getReleasedVersion() {
 
 def getSnapshotVersion() {
 	def buildNumber=env.BUILD_NUMBER
-	def array = releasedVersion.split('\.')
+	def array = releasedVersion.split("\\.")
 	return "${array[0]}.${array[1]}.$buildNumber-SNAPSHOT"
 }
