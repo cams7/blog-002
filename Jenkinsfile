@@ -17,7 +17,7 @@ node('master') {
     stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                sh "mvn -s ${pwd()/app/settings.xml} clean package"
+                sh "mvn -s settings.xml clean package"
                 dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
             }
         }
@@ -46,7 +46,7 @@ node('master') {
         try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
-                    sh "mvn -s ${pwd()/app/settings.xml} clean test -Dmaven.test.failure.ignore=true"
+                    sh "mvn clean test -Dmaven.test.failure.ignore=true"
                 }
             }
         } finally {
