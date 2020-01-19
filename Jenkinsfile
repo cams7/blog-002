@@ -52,25 +52,20 @@ pipeline {
 		stage('Prepare') {			
             steps {	
 				deleteDir()
-                parallel (
-					'Checkout': {
-						checkout([
-							$class: 'GitSCM', 
-							branches: [[name: '*/master']], 
-							extensions: [
-								[$class: 'UserIdentity', email: "${GIT_USER_EMAIL}", name: "${GIT_USER_NAME}"],
-								[$class: 'WipeWorkspace'], 
-								[$class: 'LocalBranch', localBranch: 'master']
-							], 
-							userRemoteConfigs: [[credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_URL}"]]
-						])
-					}, 'Run Zalenium': {
-						dockerCmd '''run -d --name zalenium -p 4444:4444 \
-						-v /var/run/docker.sock:/var/run/docker.sock \
-						--network="host" \
-						--privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
-					}
-				)
+                parallel Checkout: {
+					checkout([$class: 'GitSCM', 
+						branches: [[name: '*/master']], 
+						extensions: [
+							[$class: 'UserIdentity', email: "ceanma@gmail.com", name: "César A. Magalhães"],
+							[$class: 'WipeWorkspace'], 
+							[$class: 'LocalBranch', localBranch: 'master']], 
+						userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
+				}, 'Run Zalenium': {
+					dockerCmd '''run -d --name zalenium -p 4444:4444 \
+					-v /var/run/docker.sock:/var/run/docker.sock \
+					--network="host" \
+					--privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
+				}
             }
         }
 	}
