@@ -4,7 +4,7 @@
 
     <groupId>spark-intercooler</groupId>
     <artifactId>spark-intercooler</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.8-SNAPSHOT</version>
 	
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
