@@ -39,7 +39,7 @@ node('master') {
     }
 	
 	stage('Tests') {
-        /*try {
+        try {
 		    def gradleHome = tool name: 'gradle', type: 'gradle'
 			dir('tests/rest-assured') {
 				sh "$gradleHome/bin/gradle clean test"
@@ -52,7 +52,7 @@ node('master') {
         dockerCmd 'rm -f snapshot'
         dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
 
-        try {
+        /*try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
                     sh "mvn clean test -Dmaven.test.failure.ignore=true"
