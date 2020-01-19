@@ -20,6 +20,7 @@ node('master') {
             --privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
         }
     }
+	
     stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
@@ -28,6 +29,7 @@ node('master') {
             }
         }
     }
+	
 	stage('Deploy') {
         stage('Deploy') {
             dir('app') {
@@ -35,6 +37,7 @@ node('master') {
             }
         }
     }
+	
 	stage('Tests') {
         /*try {
 		    def gradleHome = tool name: 'gradle', type: 'gradle'
@@ -64,6 +67,7 @@ node('master') {
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
     }
+	
 	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
@@ -75,6 +79,10 @@ node('master') {
                 dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
             }
         }
+    }
+	
+	stage('Deploy @ Prod') {
+        dockerCmd "run -d -p 9999:9999 --name 'production' 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion}"
     }
 }
 
