@@ -17,7 +17,7 @@ node('master') {
     stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                sh 'mvn clean package'
+                sh "mvn -s ${pwd()/app/settings.xml} clean package"
                 dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
             }
         }
@@ -29,8 +29,8 @@ node('master') {
             }
         }
     }
-	/*stage('Tests') {
-        try {
+	stage('Tests') {
+        /*try {
 		    def gradleHome = tool name: 'gradle', type: 'gradle'
 			dir('tests/rest-assured') {
 				sh "$gradleHome/bin/gradle clean test"
@@ -46,18 +46,18 @@ node('master') {
         try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
-                    sh 'mvn clean test -Dmaven.test.failure.ignore=true'
+                    sh "mvn -s ${pwd()/app/settings.xml} clean test -Dmaven.test.failure.ignore=true"
                 }
             }
         } finally {
             junit testResults: 'tests/bobcat/target/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/bobcat/target/**'
-        }
+        }*/
 
         dockerCmd 'rm -f snapshot'
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
-    }*/
+    }
 	/*stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
