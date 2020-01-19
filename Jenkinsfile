@@ -52,7 +52,7 @@ node('master') {
         dockerCmd 'rm -f snapshot'
         dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
 
-        /*try {
+        try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
                     sh "mvn clean test -Dmaven.test.failure.ignore=true"
@@ -61,7 +61,7 @@ node('master') {
         } finally {
             junit testResults: 'tests/bobcat/target/*.xml', allowEmptyResults: true
             archiveArtifacts 'tests/bobcat/target/**'
-        }*/
+        }
 
         dockerCmd 'rm -f snapshot'
         dockerCmd 'stop zalenium'
