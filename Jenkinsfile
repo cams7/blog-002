@@ -6,7 +6,13 @@ node('master') {
 	stage('Prepare') {
         deleteDir()
         parallel Checkout: {
-            checkout scm
+            checkout([$class: 'GitSCM', 
+				branches: [[name: '*/master']], 
+				extensions: [
+					[$class: 'UserIdentity', email: "ceanma@gmail.com", name: "César A. Magalhães"],
+					[$class: 'WipeWorkspace'], 
+					[$class: 'LocalBranch', localBranch: 'master']], 
+				userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
         }, 'Run Zalenium': {
             dockerCmd '''run -d --name zalenium -p 4444:4444 \
             -v /var/run/docker.sock:/var/run/docker.sock \
