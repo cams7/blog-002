@@ -64,19 +64,18 @@ node('master') {
         dockerCmd 'stop zalenium'
         dockerCmd 'rm zalenium'
     }
-	/*stage('Release') {
+	stage('Release') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
                 releasedVersion = getReleasedVersion()
-				def snapshotVersion=getSnapshotVersion()
-                withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
-				    sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
-                    sh "mvn release:prepare release:perform -Dusername=${username} -Dpassword=${password}"
-                }
+				def snapshotVersion=getSnapshotVersion()                
+				withCredentials([usernamePassword(credentialsId: "github-credentials", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+					sh "mvn --batch-mode -s settings.xml -DskipTests release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${getSnapshotVersion()} -Dusername=${GIT_USERNAME} -Dpassword=${GIT_PASSWORD}"
+				}
                 //dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
             }
         }
-    }*/
+    }
 }
 
 def dockerCmd(args) {
