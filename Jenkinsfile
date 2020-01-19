@@ -6,7 +6,13 @@ node('master') {
 	stage('Prepare') {
         deleteDir()
         parallel Checkout: {
-            checkout scm
+            checkout([$class: 'GitSCM', 
+				branches: [[name: '*/master']], 
+				extensions: [
+					[$class: 'UserIdentity', email: "ceanma@gmail.com", name: "César A. Magalhães"],
+					[$class: 'WipeWorkspace'], 
+					[$class: 'LocalBranch', localBranch: 'master']], 
+				userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
         }, 'Run Zalenium': {
             dockerCmd '''run -d --name zalenium -p 4444:4444 \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -17,7 +23,7 @@ node('master') {
     stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
-                sh 'mvn clean package'
+                sh "mvn -s ${pwd()/app/settings.xml} clean package"
                 dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
             }
         }
@@ -46,7 +52,7 @@ node('master') {
         try {
             withMaven(maven: 'apache-maven') {
                 dir('tests/bobcat') {
-                    sh 'mvn clean test -Dmaven.test.failure.ignore=true'
+                    sh "mvn -s ${pwd()/app/settings.xml} clean test -Dmaven.test.failure.ignore=true"
                 }
             }
         } finally {
@@ -63,10 +69,9 @@ node('master') {
             dir('app') {
                 releasedVersion = getReleasedVersion()
 				def snapshotVersion=getSnapshotVersion()
-                withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'username', usernameVariable: 'password')]) {
-                    sh 'git config user.email ceanma@gmail.com && git config user.name "César A. Magalhães"'
-                    sh "mvn release:prepare release:perform -Dusername=${username} -Dpassword=${password}"
-                }
+                withCredentials([usernamePassword(credentialsId: "github-credentials", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+					sh "mvn --batch-mode -s ${pwd()/app/settings.xml} -DskipTests release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${getSnapshotVersion()} -Dusername=${GIT_USERNAME} -Dpassword=${GIT_PASSWORD}"
+				}
                 //dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
             }
         }
