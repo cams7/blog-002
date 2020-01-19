@@ -20,62 +20,7 @@ node('master') {
             --privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
         }
     }
-    stage('Build') {
-        withMaven(maven: 'apache-maven') {
-            dir('app') {
-                sh "mvn -s ${pwd()/app/settings.xml} clean package"
-                dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
-            }
-        }
-    }
-	stage('Deploy') {
-        stage('Deploy') {
-            dir('app') {
-                dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
-            }
-        }
-    }
-	stage('Tests') {
-        /*try {
-		    def gradleHome = tool name: 'gradle', type: 'gradle'
-			dir('tests/rest-assured') {
-				sh "$gradleHome/bin/gradle clean test"
-			}          
-        } finally {
-            junit testResults: 'tests/rest-assured/build/*.xml', allowEmptyResults: true
-            archiveArtifacts 'tests/rest-assured/build/**'
-        }
-
-        dockerCmd 'rm -f snapshot'
-        dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
-
-        try {
-            withMaven(maven: 'apache-maven') {
-                dir('tests/bobcat') {
-                    sh "mvn -s ${pwd()/app/settings.xml} clean test -Dmaven.test.failure.ignore=true"
-                }
-            }
-        } finally {
-            junit testResults: 'tests/bobcat/target/*.xml', allowEmptyResults: true
-            archiveArtifacts 'tests/bobcat/target/**'
-        }*/
-
-        dockerCmd 'rm -f snapshot'
-        dockerCmd 'stop zalenium'
-        dockerCmd 'rm zalenium'
-    }
-	stage('Release') {
-        withMaven(maven: 'apache-maven') {
-            dir('app') {
-                releasedVersion = getReleasedVersion()
-				def snapshotVersion=getSnapshotVersion()
-                withCredentials([usernamePassword(credentialsId: "github-credentials", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-					sh "mvn --batch-mode -s ${pwd()/app/settings.xml} -DskipTests release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${getSnapshotVersion()} -Dusername=${GIT_USERNAME} -Dpassword=${GIT_PASSWORD}"
-				}
-                //dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
-            }
-        }
-    }
+    
 }
 
 def dockerCmd(args) {
