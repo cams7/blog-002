@@ -14,7 +14,7 @@ node('master') {
             --privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
         }
     }
-    /*stage('Build') {
+    stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
                 sh 'mvn clean package'
@@ -29,7 +29,7 @@ node('master') {
             }
         }
     }
-	stage('Tests') {
+	/*stage('Tests') {
         try {
 		    def gradleHome = tool name: 'gradle', type: 'gradle'
 			dir('tests/rest-assured') {
