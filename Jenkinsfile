@@ -1,81 +1,6 @@
 #!/usr/bin/env groovy
 
-pipeline {
-	agent any
-	
-	environment {
-		GIT_CREDENTIALS_ID = 'github-credentials'
-		GIT_URL = 'https://github.com/cams7/blog-002.git'
-		GIT_USER_EMAIL = 'ceanma@gmail.com'
-		GIT_USER_NAME = 'César A. Magalhães'
-		
-		ROOT_PATH               = "${pwd()}"
-        MAVEN_TARGET_PATH       = "${ROOT_PATH}/app/target"
-		MAVEN_SETTINGS_PATH     = "${ROOT_PATH}/app/settings.xml"
-
-        def pom                 = readMavenPom(file: "${ROOT_PATH}/pom.xml")
-        ARTIFACT_ID             = pom.getArtifactId()
-        RELEASE_VERSION         = pom.getVersion().replace("-SNAPSHOT", "")
-				
-		NEXUS_CREDENTIALS_ID = 'nexus-credentials'
-		GITHUB_PACKAGES_CREDENTIALS_ID = 'github-packages-credentials'
-    }
-	
-	tools {
-        maven 'apache-maven'
-		gradle 'gradle'
-    }
-	
-	triggers {
-        pollSCM "H/3 * * * *"
-    }
-    
-    options {
-        timestamps()
-    }
-
-    parameters {
-		choice (
-			choices: ['test', 'prod'],
-            name: 'MAVEN_PROFILE', 
-			description: 'Maven profile'
-		)
-		
-        booleanParam (
-			name: "RELEASE", 
-			description: "Build a release from current commit.", 
-			defaultValue: false
-		)
-    }
-	
-	stages {	
-		stage('Prepare') {			
-            steps {	
-				deleteDir()
-                //parallel Checkout: {
-					checkout([$class: 'GitSCM', 
-						branches: [[name: '*/master']], 
-						extensions: [
-							[$class: 'UserIdentity', email: "ceanma@gmail.com", name: "César A. Magalhães"],
-							[$class: 'WipeWorkspace'], 
-							[$class: 'LocalBranch', localBranch: 'master']], 
-						userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
-				/*}, 'Run Zalenium': {
-					dockerCmd '''run -d --name zalenium -p 4444:4444 \
-					-v /var/run/docker.sock:/var/run/docker.sock \
-					--network="host" \
-					--privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
-				}*/
-            }
-        }
-	}
-}
-
-def dockerCmd(args) {
-    sh "docker ${args}"
-}
-
-/*def releasedVersion
+def releasedVersion
 
 node('master') {
 	stage('Prepare') {
@@ -171,4 +96,4 @@ def getSnapshotVersion() {
 	def buildNumber=env.BUILD_NUMBER
 	def array = releasedVersion.split("\\.")
 	return "${array[0]}.${array[1]}.$buildNumber-SNAPSHOT"
-}*/
+}
