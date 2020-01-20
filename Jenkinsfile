@@ -1,4 +1,4 @@
-#!/usr/bin/env groovy
+#!groovy
 
 def releasedVersion
 
@@ -86,7 +86,9 @@ node('master') {
     }
 }
 
-
+def dockerCmd(args) {
+    sh "docker ${args}"
+}
 
 def getReleasedVersion() {
     return (readFile('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')[0][1]
