@@ -15,9 +15,9 @@ node('master') {
 				userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
         }, 'Run Zalenium': {
             dockerCmd '''run -d --name zalenium -p 4444:4444 \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            --network="host" \
-            --privileged 172.42.42.200:18082/dosel/zalenium:3.4.0a start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
+			-v /var/run/docker.sock:/var/run/docker.sock \
+			--network="host" \
+			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
         }
     }
 	
