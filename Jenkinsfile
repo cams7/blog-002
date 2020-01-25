@@ -14,10 +14,11 @@ node('master') {
 					[$class: 'LocalBranch', localBranch: 'master']], 
 				userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
         }, 'Run Zalenium': {
-            dockerCmd '''run -d --name zalenium -p 4444:4444 \
+            dockerCmd '''run -d -p 4444:4444 \
 			-v /var/run/docker.sock:/var/run/docker.sock \
+			-v /tmp/videos:/home/seluser/videos \
 			--network="host" \
-			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled false --chromeContainers 1 --firefoxContainers 0'''
+			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled false --desiredContainers 1'''
         }
     }
 	
@@ -64,8 +65,8 @@ node('master') {
         }
 
         dockerCmd 'rm -f snapshot'
-        dockerCmd 'stop zalenium'
-        dockerCmd 'rm zalenium'
+        dockerCmd '''rm `docker ps | grep " dosel/zalenium" | awk '{ print $1 }'` -f'''
+        dockerCmd '''rm `docker ps | grep " elgalu/selenium" | awk '{ print $1 }'` -f'''
     }
 	
 	stage('Release') {
