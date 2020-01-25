@@ -5,7 +5,7 @@ def releasedVersion
 node('master') {
 	stage('Prepare') {
         deleteDir()
-        parallel Checkout: {
+        //parallel Checkout: {
             checkout([$class: 'GitSCM', 
 				branches: [[name: '*/master']], 
 				extensions: [
@@ -13,13 +13,13 @@ node('master') {
 					[$class: 'WipeWorkspace'], 
 					[$class: 'LocalBranch', localBranch: 'master']], 
 				userRemoteConfigs: [[credentialsId: "github-credentials", url: "https://github.com/cams7/blog-002.git"]]])
-        }, 'Run Zalenium': {
+        /*}, 'Run Zalenium': {
             dockerCmd '''run -d -p 4444:4444 \
 			-v /var/run/docker.sock:/var/run/docker.sock \
 			-v /home/zalenium/videos:/home/seluser/videos \
 			--network="host" \
 			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled true --desiredContainers 1'''
-        }
+        }*/
     }
 	
     stage('Build') {
@@ -65,8 +65,8 @@ node('master') {
         }
 
         dockerCmd 'rm -f snapshot'
-        dockerCmd '''rm `docker ps | grep " dosel/zalenium" | awk '{ print $1 }'` -f'''
-        dockerCmd '''rm `docker ps | grep " elgalu/selenium" | awk '{ print $1 }'` -f'''
+        //dockerCmd '''rm `docker ps | grep " dosel/zalenium" | awk '{ print $1 }'` -f'''
+        //dockerCmd '''rm `docker ps | grep " elgalu/selenium" | awk '{ print $1 }'` -f'''
     }
 	
 	stage('Release') {
