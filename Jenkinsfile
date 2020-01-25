@@ -16,9 +16,9 @@ node('master') {
         }, 'Run Zalenium': {
             dockerCmd '''run -d -p 4444:4444 \
 			-v /var/run/docker.sock:/var/run/docker.sock \
-			-v /tmp/videos:/home/seluser/videos \
+			-v /home/zalenium/videos:/home/seluser/videos \
 			--network="host" \
-			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled false --desiredContainers 1'''
+			--privileged dosel/zalenium:3.141.59x start --videoRecordingEnabled true --desiredContainers 1'''
         }
     }
 	
