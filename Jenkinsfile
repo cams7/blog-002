@@ -22,11 +22,21 @@ node('master') {
         }*/
     }
 	
+	stage('Build and SonarQube analysis') {			
+		withMaven(maven: 'apache-maven') {			
+			withSonarQubeEnv('sonarqube-service') {
+				dir('app') {
+					sh "mvn -B -s settings.xml -DskipTests package sonar:sonar"
+					dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
+				}
+			}
+		}
+	}
     stage('Build') {
         withMaven(maven: 'apache-maven') {
             dir('app') {
                 sh "mvn -s settings.xml clean package"
-                dockerCmd 'build --tag 192.168.100.8:18083/automatingguy/sparktodo:SNAPSHOT .'
+                dockerCmd 'build --tag 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT .'
             }
         }
     }
@@ -34,7 +44,7 @@ node('master') {
 	stage('Deploy') {
         stage('Deploy') {
             dir('app') {
-                dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 192.168.100.8:18083/automatingguy/sparktodo:SNAPSHOT'
+                dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
             }
         }
     }
@@ -51,7 +61,7 @@ node('master') {
         }
 
         dockerCmd 'rm -f snapshot'
-        dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 192.168.100.8:18083/automatingguy/sparktodo:SNAPSHOT'
+        dockerCmd 'run -d -p 9999:9999 --name "snapshot" --network="host" 172.42.42.200:18083/automatingguy/sparktodo:SNAPSHOT'
 
         try {
             withMaven(maven: 'apache-maven') {
@@ -77,13 +87,13 @@ node('master') {
 				withCredentials([usernamePassword(credentialsId: "github-credentials", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
 					sh "mvn --batch-mode -s settings.xml -DskipTests release:clean release:prepare release:perform -DreleaseVersion=${releasedVersion} -Dtag=v${releasedVersion} -DdevelopmentVersion=${getSnapshotVersion()} -Dusername=${GIT_USERNAME} -Dpassword=${GIT_PASSWORD}"
 				}
-                dockerCmd "build --tag 192.168.100.8:18083/automatingguy/sparktodo:${releasedVersion} ."
+                dockerCmd "build --tag 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion} ."
             }
         }
     }
 	
 	stage('Deploy @ Prod') {
-        dockerCmd "run -d -p 9999:9999 --name 'production' 192.168.100.8:18083/automatingguy/sparktodo:${releasedVersion}"
+        dockerCmd "run -d -p 9999:9999 --name 'production' 172.42.42.200:18083/automatingguy/sparktodo:${releasedVersion}"
     }
 }
 
